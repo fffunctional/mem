@@ -51,7 +51,22 @@ defmodule Mem do
     # range [mem.mgr.start_pos..mem.mgr.end_pos] where n+size is not
     # >= any key in the mem.mgr.allocations that is >n, and n is not <
     # (the first key in the mem.mgr.allocations that is smaller than it
-    # plus the size of that allocation)? 
+    # plus the size of that allocation)?
+
+    manager.start_pos..manager.end_pos
+      |> Enum.find(fn n ->
+
+        Enum.all?(Map.keys(manager.allocations), fn addr ->
+          (n + size < addr) || (addr < n)
+        end)
+
+        &&
+
+        n >= (Enum.find(Map.keys(manager.allocations), fn addr ->
+          n > addr + Map.get(manager.allocations, addr) - 1
+        end ))
+
+      end)
   end
 
   @doc """
