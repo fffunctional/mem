@@ -23,4 +23,15 @@ defmodule MemTest do
       |> Mem.free(0) == %{:start_pos => 0, :end_pos => 4,
         :allocations => %{}}
   end
+
+  test "cannot allocate memory larger than buffer size" do
+    assert_raise MemoryError, "not enough available memory", fn ->
+      Mem.manager(0, 5) |> Mem.alloc(6) end
+  end
+
+  test "cannot free unallocated memory" do
+  end
+
+  test "correctly allocates memory if partially allocated buffer" do
+  end
 end

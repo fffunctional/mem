@@ -1,3 +1,7 @@
+defmodule MemoryError do
+  defexception message: "not enough available memory"
+end
+
 defmodule Mem do
   @moduledoc """
   Documentation for Mem.
@@ -31,6 +35,7 @@ defmodule Mem do
   """
   def alloc(manager, size) do
     cond do
+      size > manager.end_pos - manager.start_pos -> raise MemoryError
       manager.allocations == %{} ->
         Map.update!(manager, :allocations, &(Map.put(&1, 0, size)))
       true -> raise "allocations not empty"
