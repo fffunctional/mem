@@ -46,6 +46,12 @@ defmodule Mem do
     # If the number of non-contiguous available memory slots is larger than the
     # size but there is not suitable consecutive range, could we move things around
     # to utilize space better? This seems like it might be... advanced.
+    #
+    # ETA: working on the algorithm. First n in the
+    # range [mem.mgr.start_pos..mem.mgr.end_pos] where n+size is not
+    # >= any key in the mem.mgr.allocations that is >n, and n is not <
+    # (the first key in the mem.mgr.allocations that is smaller than it
+    # plus the size of that allocation)? 
   end
 
   @doc """
