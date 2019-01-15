@@ -8,19 +8,6 @@ defmodule Mem do
   """
 
   @doc """
-  Hello world.
-
-  ## Examples
-
-      iex> Mem.hello()
-      :world
-
-  """
-  def hello do
-    :world
-  end
-
-  @doc """
   Returns a new 'chunk of contiguous memory' starting at memory address
   start_pos and taking up num_bytes of memory.
   """
@@ -38,8 +25,27 @@ defmodule Mem do
       size > manager.end_pos - manager.start_pos -> raise MemoryError
       manager.allocations == %{} ->
         Map.update!(manager, :allocations, &(Map.put(&1, 0, size)))
-      true -> raise "allocations not empty"
+      true -> raise "allocations not empty" #use find_suitable_memory_address
     end
+  end
+
+  @doc """
+  Returns the first available memory address than begins a consecutive range
+  of unused memory slots of at least the passed-in size
+  """
+  def find_suitable_memory_address(manager, size) do
+    # We need a block of contiguous free memory addresses of size n.
+    # each entry in the manager's current allocations blocks out areas of memory.
+    # we could start at [manager.start_pos] and see if any allocation's pointer
+    # is smaller than [start_pos+size-1]. If so, move forward to the end of that
+    # allocation (by usings its size), and see if any allocation's pointer is
+    # smaller than [new_pos+size-1]. And so on until we reach a suitable address
+    # with available space from it (in which case return this), or exceed the
+    # buffer size (in which case raise a MemoryError).
+    #
+    # If the number of non-contiguous available memory slots is larger than the
+    # size but there is not suitable consecutive range, could we move things around
+    # to utilize space better? This seems like it might be... advanced.
   end
 
   @doc """
