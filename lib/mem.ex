@@ -32,7 +32,7 @@ defmodule Mem do
   def alloc(manager, size) do
     cond do
       manager.allocations == %{} ->
-        Map.update!(manager, :allocations, fn current -> Map.put(current, 0, size) end)
+        Map.update!(manager, :allocations, &(Map.put(&1, 0, size)))
       true -> raise "allocations not empty"
     end
   end
@@ -41,6 +41,6 @@ defmodule Mem do
   Given a memory manager and a 'pointer', de-allocates the memory at that pointer
   """
   def free(manager, pointer) do
-    Map.update!(manager, :allocations, fn current -> Map.delete(current, pointer) end)
+    Map.update!(manager, :allocations, &(Map.delete(&1, pointer)))
   end
 end
