@@ -46,6 +46,9 @@ defmodule Mem do
   Given a memory manager and a 'pointer', de-allocates the memory at that pointer
   """
   def free(manager, pointer) do
-    Map.update!(manager, :allocations, &(Map.delete(&1, pointer)))
+    cond do
+      not Map.has_key?(manager.allocations, pointer) -> raise "tried to free unallocated memory"
+      true -> Map.update!(manager, :allocations, &(Map.delete(&1, pointer)))
+    end
   end
 end

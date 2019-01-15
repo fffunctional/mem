@@ -30,6 +30,9 @@ defmodule MemTest do
   end
 
   test "cannot free unallocated memory" do
+    assert_raise RuntimeError, "tried to free unallocated memory", fn ->
+      Mem.manager(0, 5) |> Mem.free(0)
+    end
   end
 
   test "correctly allocates memory if partially allocated buffer" do
