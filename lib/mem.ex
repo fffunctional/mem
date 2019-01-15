@@ -56,6 +56,9 @@ defmodule Mem do
     manager.start_pos..manager.end_pos
       |> Enum.find(fn n ->
 
+        # at the very least break these out into helper functions
+        # so they are not horrible logic spaghetti
+
         Enum.all?(Map.keys(manager.allocations), fn addr ->
           (n + size < addr) || (addr < n)
         end)
