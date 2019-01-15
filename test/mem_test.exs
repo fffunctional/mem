@@ -36,5 +36,9 @@ defmodule MemTest do
   end
 
   test "correctly allocates memory if partially allocated buffer" do
+    assert Mem.manager(0, 5)
+      |> Mem.alloc(3)
+      |> Mem.alloc(2) == %{:start_pos => 0, :end_pos => 4,
+        :allocations => %{0 => 3, 3 => 2}}
   end
 end
