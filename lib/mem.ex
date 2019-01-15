@@ -59,27 +59,30 @@ defmodule Mem do
      case manager.start_pos..manager.end_pos
       |> Enum.find(fn n ->
 
-        # at the very least break these out into helper functions
-        # so they are not horrible logic spaghetti
-
-        Enum.all?(Map.keys(manager.allocations), fn addr ->
-          (n + size < addr) || (addr < n)
-        end)
-
-        &&
-
-        n >= (Enum.find(Map.keys(manager.allocations), fn addr ->
-          n > addr + Map.get(manager.allocations, addr) - 1
-        end ))
-
-        &&
-
-        n + size - 1 <= manager.end_pos
+        n |> alloc_end_does_not_overwrite(manager, size) &&
+        n |> alloc_start_does_not_overwrite(manager) &&
+        n |> no_buffer_overflow(manager, size)
 
       end) do
         nil -> raise MemoryError
         n   -> n
       end
+  end
+
+  defp alloc_end_does_not_overwrite(n, manager, size) do
+    Enum.all?(Map.keys(manager.allocations), fn addr ->
+      (n + size < addr) || (addr < n)
+    end)
+  end
+
+  defp alloc_start_does_not_overwrite(n, manager) do
+    n >= Enum.find(Map.keys(manager.allocations), fn addr ->
+      n > addr + Map.get(manager.allocations, addr) - 1
+    end)
+  end
+
+  defp no_buffer_overflow(n, manager, size) do
+    n + size - 1 <= manager.end_pos
   end
 
   @doc """
