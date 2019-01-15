@@ -7,11 +7,13 @@ defmodule MemTest do
   end
 
   test "new Memory Manager" do
-    assert Mem.manager(0, 5) == %{0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0}
+    assert Mem.manager(0, 5) == %{:start_pos => 0, :end_pos => 4,
+      :allocations => %{}}
   end
 
   test "can allocate memory" do
     assert Mem.manager(0, 5)
-      |> Mem.alloc(3) == %{0 => 1, 1 => 1, 2 => 1, 3 => 0, 4 => 0}
-    end  
+      |> Mem.alloc(3) == %{:start_pos => 0, :end_pos => 4,
+        :allocations => %{0 => 3}}
+    end
 end
