@@ -24,8 +24,11 @@ defmodule Mem do
     cond do
       size > manager.end_pos - manager.start_pos -> raise MemoryError
       manager.allocations == %{} ->
+        # this should ultimately be achievable using the find_sm_address function
         Map.update!(manager, :allocations, &(Map.put(&1, 0, size)))
-      true -> raise "allocations not empty" #use find_suitable_memory_address
+      true ->
+        addr = find_suitable_memory_address(manager, size)
+        Map.update!(manager, :allocations, &(Map.put(&1, addr, size)))
     end
   end
 
@@ -53,7 +56,7 @@ defmodule Mem do
     # (the first key in the mem.mgr.allocations that is smaller than it
     # plus the size of that allocation)?
 
-    manager.start_pos..manager.end_pos
+     case manager.start_pos..manager.end_pos
       |> Enum.find(fn n ->
 
         # at the very least break these out into helper functions
@@ -69,7 +72,14 @@ defmodule Mem do
           n > addr + Map.get(manager.allocations, addr) - 1
         end ))
 
-      end)
+        &&
+
+        n + size - 1 <= manager.end_pos
+
+      end) do
+        nil -> raise MemoryError
+        n   -> n
+      end
   end
 
   @doc """
