@@ -16,4 +16,11 @@ defmodule MemTest do
       |> Mem.alloc(3) == %{:start_pos => 0, :end_pos => 4,
         :allocations => %{0 => 3}}
     end
+
+  test "can free memory" do
+    assert Mem.manager(0, 5)
+      |> Mem.alloc(3)
+      |> Mem.free(0) == %{:start_pos => 0, :end_pos => 4,
+        :allocations => %{}}
+  end
 end

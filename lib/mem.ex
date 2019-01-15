@@ -36,4 +36,11 @@ defmodule Mem do
       true -> raise "allocations not empty"
     end
   end
+
+  @doc """
+  Given a memory manager and a 'pointer', de-allocates the memory at that pointer
+  """
+  def free(manager, pointer) do
+    Map.update!(manager, :allocations, fn current -> Map.delete(current, pointer) end)
+  end
 end
